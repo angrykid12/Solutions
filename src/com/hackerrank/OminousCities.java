@@ -1,6 +1,7 @@
 package com.hackerrank;
 
 import java.util.*;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -12,7 +13,7 @@ import java.util.regex.Pattern;
  */
 public class OminousCities {
 
-//    Logger logger = new Logger();
+    private final static Logger LOGGER = Logger.getLogger(OminousCities.class.getName());
 
     public static ArrayList<String> findCitiesInLatin(String[] allCities) {
         Pattern latinPattern = Pattern.compile("[a-z]+");
@@ -46,14 +47,14 @@ public class OminousCities {
 
         Map.Entry<Double, String> ceilingEntry, floorEntry;
 
-        String ceilingValue = null,
+        String ceilingCity = null,
                 floorValue = null,
                 closestCity;
 
         vowelsCount = regexCount(homeCity, "[^aeiou]");
         consonantsCount = regexCount(homeCity, "[aeiou]");
         homeRating = consonantsCount / vowelsCount;
-        System.out.println("homeRating: {" + homeRating + "=" + homeCity + "}");
+        LOGGER.info("homeRating: {" + homeRating + "=" + homeCity + "}");
 
         List<String> citiesInLatin = findCitiesInLatin(allCities);
 
@@ -74,59 +75,69 @@ public class OminousCities {
         floorEntry = citiesRating.floorEntry(3.0);
 
         if (citiesRating.isEmpty()) {
-            System.out.println("citiesRating.isEmpty()");
+            LOGGER.info("citiesRating.isEmpty()");
+            LOGGER.info("NOT_FOUND");
             return "NOT_FOUND";
         } else {
-            System.out.println("citiesRating: " + citiesRating);
+            LOGGER.info("citiesRating: " + citiesRating);
         }
 
         if (ceilingEntry != null) {
             ceilingRating = ceilingEntry.getKey();
-            ceilingValue = ceilingEntry.getValue();
-            System.out.println("ceilingRating: {" + ceilingRating + "=" + ceilingValue + "}");
+            ceilingCity = ceilingEntry.getValue();
+            LOGGER.info("ceilingRating: {" + ceilingRating + "=" + ceilingCity + "}");
         } else {
-            System.out.println("ceilingRating = null");
+            LOGGER.info("ceilingRating = null");
         }
 
         if (floorEntry != null) {
             floorRating = floorEntry.getKey();
             floorValue = floorEntry.getValue();
-            System.out.println("floorRating: {" + floorRating + "=" + floorValue + "}");
+            LOGGER.info("floorRating: {" + floorRating + "=" + floorValue + "}");
         } else {
-            System.out.println("floorRating = null");
+            LOGGER.info("floorRating = null");
         }
 
         if (ceilingEntry == null & floorEntry == null) {
-            System.out.println("ceilingEntry == null & floorEntry == null");
+            LOGGER.info("ceilingEntry == null & floorEntry == null");
+            LOGGER.info("NOT_FOUND");
             return "NOT_FOUND";
         } else {
             homeCeilingDiff = Math.abs(homeRating - ceilingRating);
-            System.out.println("homeCeilingDiff: {" + homeRating + "=" + homeCity + "} - {" + ceilingRating + "=" + ceilingValue + "} = [" + homeCeilingDiff + "]");
+            LOGGER.info("homeCeilingDiff: {" + homeRating + "=" + homeCity + "} - {" + ceilingRating + "=" + ceilingCity + "} = [" + homeCeilingDiff + "]");
             homeFloorDiff = Math.abs(homeRating - floorRating);
-            System.out.println("homeFloorDiff: {" + homeRating + "=" + homeCity + "} - {" + floorRating + "=" + floorValue + "} = [" + homeFloorDiff + "]");
+            LOGGER.info("homeFloorDiff: {" + homeRating + "=" + homeCity + "} - {" + floorRating + "=" + floorValue + "} = [" + homeFloorDiff + "]");
 
             if (homeCeilingDiff > homeFloorDiff) {
-                System.out.println("homeCeilingDiff=[" + homeCeilingDiff + "] > homeFloorDiff=[" + homeFloorDiff + "]");
+                LOGGER.info("homeCeilingDiff=[" + homeCeilingDiff + "] > homeFloorDiff=[" + homeFloorDiff + "]");
                 closestRating = floorRating;
             } else {
-                System.out.println("homeCeilingDiff=[" + homeCeilingDiff + "] < homeFloorDiff=[" + homeFloorDiff + "]");
+                LOGGER.info("homeCeilingDiff=[" + homeCeilingDiff + "] < homeFloorDiff=[" + homeFloorDiff + "]");
                 closestRating = ceilingRating;
             }
 
             closestCity = citiesRating.get(closestRating);
-            System.out.println("closestCityRating: {" + closestRating + "=" + closestCity + "}");
+            LOGGER.info("closestCityRating: {" + closestRating + "=" + closestCity + "}");
         }
 
         return closestCity;
     }
 
+    public static void testCase() {
+        //official TC
+        assert "Zzeta".equals(findBestCity("Crox", new String[]{"4", "Aneeaio", "Crox", "Uniq", "Zzeta"}));
+        assert "NOT_FOUND".equals(findBestCity("Crox", new String[]{"1", "Crox"}));
+        //my TC
+        assert "Crax".equals(findBestCity("Crox", new String[]{"6", "Aneeaio", "Crox", "Uniq", "Zzeta", "Crax", "Crex"}));
+        assert "Crax".equals(findBestCity("Crox", new String[]{"6", "Aneeaio", "Crox", "Uniq", "Zzeta", "вфыа", "Crax", "Crex", "Cc5rex", "Cccrex"}));
+        assert "Zzeta".equals(findBestCity("Crox", new String[]{"5", "Aneeaio", "Crox", "Uniq", "Zzeta", "Cccrex"}));
+        assert "Ccrex".equals(findBestCity("Crox", new String[]{"5", "Aneeaio", "Crox", "Uniq", "Zzeta", "Ccrex"}));
+    }
+
     public static void main(String[] args) {
-//        assert findBestCity("Crox", new String[]{"6", "Aneeaio", "Crox", "Uniq", "Zzeta", "Crax", "Crex"});
-        findBestCity("Crox", new String[]{"6", "Aneeaio", "Crox", "Uniq", "Zzeta", "вфыа", "Crax", "Crex", "Ccrex", "Cccrex"});
-//        findBestCity("Crox", new String[]{"4", "Aneeaio", "Crox", "Uniq", "Zzeta"});
-//        System.out.println(findBestCity("Crox", new String[]{"1", "Crox"}));
-//        findBestCity("Crox", new String[]{"5", "Aneeaio", "Crox", "Uniq", "Zzeta", "Cccrex"});
-//        findBestCity("Crox", new String[]{"5", "Aneeaio", "Crox", "Uniq", "Zzeta", "Ccrex"});
+        LOGGER.setLevel(Level.ALL);
+        testCase();
+
     }
 
 }
