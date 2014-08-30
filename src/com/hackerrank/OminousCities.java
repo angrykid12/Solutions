@@ -1,5 +1,7 @@
 package com.hackerrank;
 
+import java.lang.management.ManagementFactory;
+import java.lang.management.RuntimeMXBean;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -46,11 +48,12 @@ import java.util.regex.Pattern;
  * Zzeta
  *
  * @author m1st
- * @version 1.1
- * @since 8/29/2014
+ * @version 1.2
  * @see <a href="http://git.io/ccOaiw">Download the most recent version here</a>
+ * @since 8/30/2014
  */
 
+//TODO: reorder "if" statements
 public class OminousCities {
 
     private static final Logger LOGGER = Logger.getLogger(OminousCities.class.getName());
@@ -76,7 +79,7 @@ public class OminousCities {
         double vowelsCount;
         double consonantsCount;
         double homeRating;
-        double ratio;
+        double travelRating;
         double ceilingRating = 0;
         double floorRating = 0;
         double homeCeilingDiff;
@@ -97,20 +100,21 @@ public class OminousCities {
 
         for (String city : citiesInLatin) {
             if (city.equals(homeCity)) {
-                continue;
+                continue; // skips the same city to shorten calculations
             }
             vowelsCount = regexCount(city, "[^aeiou]");
             consonantsCount = regexCount(city, "[aeiou]");
-            ratio = consonantsCount / vowelsCount;
-            if (citiesRating.containsKey(ratio)) {
-                continue;
+            travelRating = consonantsCount / vowelsCount;
+            if (citiesRating.containsKey(travelRating)) {
+                continue; // skips the same travelRating to shorten calculations
             }
-            citiesRating.put(ratio, city);
+            citiesRating.put(travelRating, city);
         }
 
-        ceilingEntry = citiesRating.ceilingEntry(3.0);
-        floorEntry = citiesRating.floorEntry(3.0);
+        ceilingEntry = citiesRating.ceilingEntry(homeRating);
+        floorEntry = citiesRating.floorEntry(homeRating);
 
+        // START: Calculation cases due to data insufficiency
         if (citiesRating.isEmpty()) {
             LOGGER.info("citiesRating.isEmpty()");
             LOGGER.info("NOT_FOUND");
@@ -119,64 +123,95 @@ public class OminousCities {
             LOGGER.info("citiesRating: " + citiesRating);
         }
 
-        if (ceilingEntry != null) {
-            ceilingRating = ceilingEntry.getKey();
-            ceilingCity = ceilingEntry.getValue();
-            LOGGER.info("ceilingRating: {" + ceilingRating + "=" + ceilingCity + "}");
-        } else {
-            LOGGER.info("ceilingRating = null");
-        }
-
-        if (floorEntry != null) {
-            floorRating = floorEntry.getKey();
-            floorValue = floorEntry.getValue();
-            LOGGER.info("floorRating: {" + floorRating + "=" + floorValue + "}");
-        } else {
-            LOGGER.info("floorRating = null");
-        }
-
         if (ceilingEntry == null & floorEntry == null) {
             LOGGER.info("ceilingEntry == null & floorEntry == null");
             LOGGER.info("NOT_FOUND");
             return "NOT_FOUND";
-        } else {
-            homeCeilingDiff = Math.abs(homeRating - ceilingRating);
-            LOGGER.info("homeCeilingDiff: {" + homeRating + "=" + homeCity + "} - {" + ceilingRating + "=" + ceilingCity + "} = [" + homeCeilingDiff + "]");
-            homeFloorDiff = Math.abs(homeRating - floorRating);
-            LOGGER.info("homeFloorDiff: {" + homeRating + "=" + homeCity + "} - {" + floorRating + "=" + floorValue + "} = [" + homeFloorDiff + "]");
-
-            if (homeCeilingDiff > homeFloorDiff) {
-                LOGGER.info("homeCeilingDiff=[" + homeCeilingDiff + "] > homeFloorDiff=[" + homeFloorDiff + "]");
-                closestRating = floorRating;
-            } else {
-                LOGGER.info("homeCeilingDiff=[" + homeCeilingDiff + "] < homeFloorDiff=[" + homeFloorDiff + "]");
-                closestRating = ceilingRating;
-            }
-
-            closestCity = citiesRating.get(closestRating);
-            LOGGER.info("closestCityRating: {" + closestRating + "=" + closestCity + "}");
         }
+        if (ceilingEntry != null) {
+            ceilingRating = ceilingEntry.getKey();
+            if (ceilingRating == 0) {
+                //TODO
+            }
+            ceilingCity = ceilingEntry.getValue();
+            LOGGER.info("ceilingRating: {" + ceilingRating + "=" + ceilingCity + "}");
+        } else {
+            LOGGER.info("ceilingRating = null");
+            //TODO
+        }
+        if (floorEntry != null) {
+            floorRating = floorEntry.getKey();
+            if (floorRating == 0) {
+                //TODO
+            }
+            floorValue = floorEntry.getValue();
+            LOGGER.info("floorRating: {" + floorRating + "=" + floorValue + "}");
+        } else {
+            LOGGER.info("floorRating = null");
+            //TODO
+        }
+
+        if (ceilingRating == 0 & floorRating == 0) {
+            //TODO
+        } else if (ceilingRating == homeRating) {
+            //TODO
+        } else if (floorRating == homeRating) {
+            //TODO
+        }
+        // END: Calculation cases due to data insufficiency
+
+        // START: Calculation cases due to data sufficiency
+        homeCeilingDiff = Math.abs(homeRating - ceilingRating);
+        LOGGER.info("homeCeilingDiff: {" + homeRating + "=" + homeCity + "} - {" + ceilingRating + "=" + ceilingCity + "} = [" + homeCeilingDiff + "]");
+        homeFloorDiff = Math.abs(homeRating - floorRating);
+        LOGGER.info("homeFloorDiff: {" + homeRating + "=" + homeCity + "} - {" + floorRating + "=" + floorValue + "} = [" + homeFloorDiff + "]");
+
+        if (homeCeilingDiff > homeFloorDiff) {
+            LOGGER.info("homeCeilingDiff=[" + homeCeilingDiff + "] > homeFloorDiff=[" + homeFloorDiff + "]");
+            closestRating = floorRating;
+        } else {
+            LOGGER.info("homeCeilingDiff=[" + homeCeilingDiff + "] < homeFloorDiff=[" + homeFloorDiff + "]");
+            closestRating = ceilingRating;
+        }
+        // END: Calculation cases due to data sufficiency
+
+        closestCity = citiesRating.get(closestRating);
+        LOGGER.info("closestCityRating: {" + closestRating + "=" + closestCity + "}");
 
         return closestCity;
     }
 
-    public static void testCase() {
-        //official TC
-        assert "Zzeta".equals(findBestCity("Crox", new String[]{"4", "Aneeaio", "Crox", "Uniq", "Zzeta"}));
-        assert "NOT_FOUND".equals(findBestCity("Crox", new String[]{"1", "Crox"}));
-        //my TC
-        assert "Crax".equals(findBestCity("Crox", new String[]{"6", "Aneeaio", "Crox", "Uniq", "Zzeta", "Crax", "Crex"}));
-        assert "Crax".equals(findBestCity("Crox", new String[]{"6", "Aneeaio", "Crox", "Uniq", "Zzeta", "вфыа", "Crax", "Crex", "Cc5rex", "Cccrex"}));
-        assert "Zzeta".equals(findBestCity("Crox", new String[]{"5", "Aneeaio", "Crox", "Uniq", "Zzeta", "Cccrex"}));
-        assert "Ccrex".equals(findBestCity("Crox", new String[]{"5", "Aneeaio", "Crox", "Uniq", "Zzeta", "Ccrex"}));
+    public static void testFindBestCity() {
+        // Checking VM args
+        RuntimeMXBean runtimeMxBean = ManagementFactory.getRuntimeMXBean();
+        List<String> vmArgs = runtimeMxBean.getInputArguments();
+        boolean isEA = false;
+
+        if ((!vmArgs.contains("-ea")) & (!vmArgs.contains("-enableassertions"))) {
+            System.out.println("Add \"-ea\"/\"-enableassertions\" to VM options for assertions");
+        } else {
+            isEA = true;
+        }
+
+        // Official TC
+        assert "Zzeta".equals(findBestCity("Crox", new String[]{"4", "Aneeaio", "Crox", "Uniq", "Zzeta"})) : "Test #1";
+        assert "NOT_FOUND".equals(findBestCity("Crox", new String[]{"1", "Crox"})) : "Test #2";
+        // My TC
+        assert "Crax".equals(findBestCity("Crox", new String[]{"6", "Aneeaio", "Crox", "Uniq", "Zzeta", "Crax", "Crex"})) : "Test #3";
+        assert "AAneeaio".equals(findBestCity("Aneeaio", new String[]{"6", "AAneeaio", "Aneeaio", "Crox", "Uniq", "Zzeta", "вфыа", "Crax", "Crex", "Cc5rex", "Cccrex"})) : "Test #4";
+        assert "Crax".equals(findBestCity("Crox", new String[]{"6", "Aneeaio", "Crox", "Uniq", "Zzeta", "вфыа", "Crax", "Crex", "Cc5rex", "Cccrex"})) : "Test #5";
+        assert "Zzeta".equals(findBestCity("Crox", new String[]{"5", "Aneeaio", "Crox", "Uniq", "Zzeta", "Cccrex"})) : "Test #6";
+        assert "Ccrex".equals(findBestCity("Crox", new String[]{"5", "Aneeaio", "Crox", "Uniq", "Zzeta", "Ccrex"})) : "Test #7";
+
+        if (isEA) {
+            System.out.println(Thread.currentThread().getStackTrace()[1].getMethodName() + ": All tests passed");
+        }
+
     }
 
     public static void main(String[] args) {
-        LOGGER.setLevel(Level.ALL);
-
-        //for run add "-ea" to VM options
-        testCase();
-
+        LOGGER.setLevel(Level.OFF); // to enable/disable logging
+        testFindBestCity();
     }
 
 }
