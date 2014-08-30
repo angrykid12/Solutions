@@ -7,13 +7,52 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Created by m1st on 8/29/2014.
+ * Ominous Cities (Programming)
+ * Say there is a country, Mgarq, that has a number of cities in it.
+ * Its inhabitants consider some cities more ominous than others, but based purely on the ratio of consonants to vowels.
+ * The name of the country itself ("Mgarq") would get an ominous rating of 4/1 = 4.0 (4 consonants, 1 vowel).
+ * The capital city, Aneeaio is very non-ominous, with a rating of 1/6 = 0.1667.
+ * Now the inhabitants like to travel, but only to other cities with a similar level of ominous-ness.
+ * Write a method that one of these inhabitants can call to find out the optimal city for them to take a vacation to.
+ * It takes their home city and the complete list of cities in the country,
+ * and returns the city with the closest ominous rating in the country to their home city.
+ * The home city should be in the list of cities in the country, but home city should not be returned as the result.
+ * <p/>
+ * Clarifications
+ * Vowels are 'a', 'e', 'i', 'o', and 'u' (lower case and upper case). Everything else is a consonant.
+ * If there is a tie, return the first city encountered in the input cities among the tie cities.
+ * Return "NOT_FOUND" if no suitable city can be found.
+ * <p/>
+ * Example Input 1:
+ * Home city: Crox
+ * All cities: Aneeaio, Crox, Uniq, Zzeta
+ * <p/>
+ * Example Output 1:
+ * Zzeta
+ * <p/>
+ * Format for custom test case:
+ * Home City
+ * # of all cities
+ * City 1
+ * City 2
+ * ...
+ * <p/>
+ * Example Input for custom test case:
+ * Crox
+ * 4
+ * Aneeaio
+ * Crox
+ * Uniq
+ * Zzeta
  *
- * @version 1.0
+ * @author m1st
+ * @version 1.1
+ * @since 8/29/2014
  */
+
 public class OminousCities {
 
-    private final static Logger LOGGER = Logger.getLogger(OminousCities.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(OminousCities.class.getName());
 
     public static ArrayList<String> findCitiesInLatin(String[] allCities) {
         Pattern latinPattern = Pattern.compile("[a-z]+");
@@ -33,23 +72,20 @@ public class OminousCities {
 
     static String findBestCity(String homeCity, String[] allCities) {
 
-        double vowelsCount,
-                consonantsCount,
-                homeRating,
-                travelRating,
-                ceilingRating = 0,
-                floorRating = 0,
-                homeCeilingDiff,
-                homeFloorDiff,
-                closestRating;
-
+        double vowelsCount;
+        double consonantsCount;
+        double homeRating;
+        double ratio;
+        double ceilingRating = 0;
+        double floorRating = 0;
+        double homeCeilingDiff;
+        double homeFloorDiff;
+        double closestRating;
         NavigableMap<Double, String> citiesRating = new TreeMap<>();
-
         Map.Entry<Double, String> ceilingEntry, floorEntry;
-
-        String ceilingCity = null,
-                floorValue = null,
-                closestCity;
+        String ceilingCity = null;
+        String floorValue = null;
+        String closestCity;
 
         vowelsCount = regexCount(homeCity, "[^aeiou]");
         consonantsCount = regexCount(homeCity, "[aeiou]");
@@ -64,11 +100,11 @@ public class OminousCities {
             }
             vowelsCount = regexCount(city, "[^aeiou]");
             consonantsCount = regexCount(city, "[aeiou]");
-            travelRating = consonantsCount / vowelsCount;
-            if (citiesRating.containsKey(travelRating)) {
+            ratio = consonantsCount / vowelsCount;
+            if (citiesRating.containsKey(ratio)) {
                 continue;
             }
-            citiesRating.put(travelRating, city);
+            citiesRating.put(ratio, city);
         }
 
         ceilingEntry = citiesRating.ceilingEntry(3.0);
@@ -136,6 +172,8 @@ public class OminousCities {
 
     public static void main(String[] args) {
         LOGGER.setLevel(Level.ALL);
+
+        //for run add "-ea" to VM options
         testCase();
 
     }
