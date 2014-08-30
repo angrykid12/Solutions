@@ -48,6 +48,7 @@ import java.util.regex.Pattern;
  * @author m1st
  * @version 1.1
  * @since 8/29/2014
+ * @see <a href="http://git.io/ccOaiw">Download the most recent version here</a>
  */
 
 public class OminousCities {
