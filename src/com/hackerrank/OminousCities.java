@@ -1,7 +1,6 @@
 package com.hackerrank;
 
 import java.lang.management.ManagementFactory;
-import java.lang.management.RuntimeMXBean;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -56,7 +55,7 @@ import java.util.regex.Pattern;
 //TODO: reorder "if" statements
 public class OminousCities {
 
-    private static final Logger LOGGER = Logger.getLogger(OminousCities.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(Class.class.getName());
 
     public static ArrayList<String> findCitiesInLatin(String[] allCities) {
         Pattern latinPattern = Pattern.compile("[a-z]+");
@@ -72,6 +71,14 @@ public class OminousCities {
 
     public static int regexCount(String input, String pattern) {
         return input.toLowerCase().replaceAll(pattern, "").length();
+    }
+
+    public static List<String> getVmOptions() {
+        return ManagementFactory.getRuntimeMXBean().getInputArguments();
+    }
+
+    public static String getMethodName() {
+        return Thread.currentThread().getStackTrace()[2].getMethodName();
     }
 
     static String findBestCity(String homeCity, String[] allCities) {
@@ -183,8 +190,7 @@ public class OminousCities {
 
     public static void testFindBestCity() {
         // Checking VM args
-        RuntimeMXBean runtimeMxBean = ManagementFactory.getRuntimeMXBean();
-        List<String> vmArgs = runtimeMxBean.getInputArguments();
+        List<String> vmArgs = getVmOptions();
         boolean isEA = false;
 
         if ((!vmArgs.contains("-ea")) & (!vmArgs.contains("-enableassertions"))) {
@@ -204,13 +210,13 @@ public class OminousCities {
         assert "Ccrex".equals(findBestCity("Crox", new String[]{"5", "Aneeaio", "Crox", "Uniq", "Zzeta", "Ccrex"})) : "Test #7";
 
         if (isEA) {
-            System.out.println(Thread.currentThread().getStackTrace()[1].getMethodName() + ": All tests passed");
+            System.out.println(getMethodName() + ": All tests passed");
         }
 
     }
 
     public static void main(String[] args) {
-        LOGGER.setLevel(Level.OFF); // to enable/disable logging
+        LOGGER.setLevel(Level.ALL); // to enable/disable logging
         testFindBestCity();
     }
 
